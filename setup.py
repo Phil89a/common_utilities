@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="common-utils",
+    name="common_utilities",
     version="0.1.0",
     description="Shared logging and utilities for my energy projects",
     author="Phil",
