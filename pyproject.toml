@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "common_utilities"
+version = "0.2.5"
+description = "Shared MQTT, logging, and utilities for my energy projects"
+authors = [
+  { name = "Phil" }
+]
+dependencies = [
+  "loguru>=0.7.3"
+]
+requires-python = ">=3.8"
