@@ -1,0 +1,7 @@
+Metadata-Version: 2.4
+Name: common_utilities
+Version: 0.2.5.dev0+g9ca70d1.d20250712
+Summary: Shared MQTT, logging, and utilities for my energy projects
+Author: Phil
+Requires-Python: >=3.8
+Requires-Dist: loguru>=0.7.3
