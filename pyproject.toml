@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "common_utilities"
-version = "0.2.6"
+version = "1.0.0"
 description = "Shared MQTT, logging, and utilities for my energy projects"
 authors = [
   { name = "Phil" }
