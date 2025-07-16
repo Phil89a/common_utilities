@@ -1,23 +1,18 @@
 #!/bin/bash
 
-# This script automates the process of cutting a new version for a Python project
-# that uses pyproject.toml for versioning and Git for version control.
+# This script automates the process of cutting a new version for a Python project,
+# building the package, and uploading it to a private PyPI server.
 # It updates the version in pyproject.toml, commits the change,
 # creates an annotated Git tag, and pushes both the branch and the tag to GitHub.
 
 # --- Configuration ---
-# Set the root directory of your common_utilities repository.
-# IMPORTANT: Adjust this path if your repository is located elsewhere.
 REPO_ROOT="/Users/phil/PycharmProjects/common_utilities"
-
-# Name of your pyproject.toml file (usually just 'pyproject.toml')
 PYPROJECT_TOML="pyproject.toml"
-
-# The main branch where you are developing (e.g., 'main', 'master', 'develop')
 MAIN_BRANCH="main"
-
-# The name of your remote repository (usually 'origin' for GitHub)
 REMOTE_NAME="origin"
+PYPI_SERVER_URL="http://192.168.85.4:9333/" # Your Debian Dev Host IP and Port
+PYPI_USERNAME="phil"       # The username you set with htpasswd
+PYPI_PASSWORD="ssh-0918989-wh1tehaven"       # The password you set with htpasswd
 
 # --- Functions ---
 
@@ -29,7 +24,7 @@ error_exit() {
 
 # --- Main Script ---
 
-echo "Starting version cut process..."
+echo "Starting version cut, build, and upload process..."
 
 # 1. Navigate to the repository root
 # This ensures all Git commands are run from the correct directory.
@@ -112,7 +107,21 @@ echo "Pushing new tag '$NEW_VERSION' to '$REMOTE_NAME'..."
 git push "$REMOTE_NAME" "$NEW_VERSION" || error_exit "Failed to push tag '$NEW_VERSION' to '$REMOTE_NAME'."
 echo "Tag '$NEW_VERSION' pushed successfully."
 
+# 10. Build the Python package
+echo "Building Python package..."
+python -m build --sdist --wheel || error_exit "Failed to build Python package."
+echo "Package built successfully in 'dist/' directory."
+
+# 11. Upload the package to the private PyPI server
+echo "Uploading package to private PyPI server: $PYPI_SERVER_URL..."
+# Using --config-file /dev/null to prevent twine from looking for ~/.pypirc
+# and passing credentials directly via environment variables for security.
+# The `simple/` endpoint is crucial for pip/twine to work correctly.
+env TWINE_USERNAME="$PYPI_USERNAME" TWINE_PASSWORD="$PYPI_PASSWORD" \
+twine upload --repository-url "${PYPI_SERVER_URL}simple/" dist/* || error_exit "Failed to upload package to PyPI server."
+echo "Package uploaded successfully."
+
 echo "----------------------------------------------------"
-echo "Version $NEW_VERSION successfully cut and pushed!"
+echo "Version $NEW_VERSION successfully cut, built, and uploaded!"
 echo "Remember to create a GitHub Release from this tag in the GitHub UI (Releases -> Draft a new release -> Select tag)."
 echo "----------------------------------------------------"
